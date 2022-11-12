@@ -1,51 +1,14 @@
 import React, { Component } from "react";
-import axios from "axios";
 import Notiflix from 'notiflix';
 import Searchbar from "./Searchbar/Searchbar";
 import ImageGallery from "./ImageGallery/ImageGallery";
 import Button from "./Button/Button";
 import Loader from "./Loader/Loader";
 import Modal from "./Modal/Modal";
+import { axiosGetPixabayPhoto } from "../services/api"
 
-const API_KEY = "29840548-44be53550e175681813a70adf";
 const PER_PAGE = 12;
 const PHOTO_LIMIT = 500;
-
-function getPixabayURL(searchTerm, pageNum) {
-  const basePixabayURL = "https://pixabay.com/api/";
-  const searchParams = new URLSearchParams({
-    key: API_KEY,
-    q: searchTerm,
-    image_type: "photo",
-    orientation: "horizontal",
-    safesearch: true,
-    per_page: PER_PAGE,
-    page: pageNum,
-  });
-  return `${basePixabayURL}?${searchParams}`;
-}
-
-async function axiosGetPixabayPhoto(url) {
-  try {
-    const response = await axios.get(url);
-    //console.log(response);
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-const getGalleryPhotoByNumPage = (requestTerm, numPage, onSuccess, onError) => {
-  const url = getPixabayURL(requestTerm, numPage);
-  axiosGetPixabayPhoto(url)
-    .then(data => {
-      onSuccess(data);
-  })
-    .catch(error => {
-      console.log(error);
-      onError(error);
-  });
-}
 
 class App extends Component {
   state = {
@@ -55,12 +18,13 @@ class App extends Component {
     loading: false,
     urlBigPhoto: '',
     tagsBigPhoto: '',
+    isNextPage: true,
   }
   
   responseGalleryPhoto = (data) => {
-    //const total = data.data.total;
-    const totalHits = data.data.totalHits;
-    const hits = data.data.hits;
+    //const total = data.total;
+    const totalHits = data.totalHits;
+    const hits = data.hits;
 
     //console.log(total);
     //console.log(totalHits);
@@ -77,6 +41,7 @@ class App extends Component {
 
     if ((this.state.pageCnt > 1) && (hits.length < PER_PAGE)) {
       Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+      this.setState({ isNextPage: false });
     }
   }
 
@@ -85,6 +50,7 @@ class App extends Component {
     if (error.message === 400) {
       if (this.state.pageCnt > (PHOTO_LIMIT/PER_PAGE)) {
         Notiflix.Notify.info('The API is limited to return a maximum of 500 images per query.');
+        this.setState({ isNextPage: false });
       } else {
         Notiflix.Notify.warning('Reset page.');
       }
@@ -99,7 +65,13 @@ class App extends Component {
     {
       //console.log('getGalleryPhotoByNumPage');
       this.setState({ loading: true });
-      getGalleryPhotoByNumPage(searchValue, pageCnt, this.responseGalleryPhoto, this.gotAnError)
+
+      axiosGetPixabayPhoto(searchValue, pageCnt, PER_PAGE).then(data => {
+        this.responseGalleryPhoto(data.data);
+      }).catch(error => {
+        //console.log(error);
+        this.gotAnError(error);
+      });
     }
   }
 
@@ -109,6 +81,7 @@ class App extends Component {
         searchValue: searchValue,
         pageCnt: 1,
         galleryPhotos: [],
+        isNextPage: true,
       });
       //console.log('gallery reset');
     }
@@ -127,7 +100,7 @@ class App extends Component {
   }
   
   render() {
-    const { galleryPhotos, loading, urlBigPhoto, tagsBigPhoto } = this.state;
+    const { galleryPhotos, loading, urlBigPhoto, tagsBigPhoto, isNextPage } = this.state;
 
     return (
       <div className="App">
@@ -136,7 +109,7 @@ class App extends Component {
           <ImageGallery galleryPhotos={galleryPhotos} onClick={this.handleBigPhoto} />
         }
         {loading && <Loader />}
-        {galleryPhotos.length > 0 && <Button onClick={this.handleNextPage} />}
+        {galleryPhotos.length > 0 && isNextPage && <Button onClick={this.handleNextPage} />}
         {urlBigPhoto.length > 0 &&
           <Modal urlImage={urlBigPhoto} tag={tagsBigPhoto}
             onClose={() => this.handleBigPhoto('', '')} 
