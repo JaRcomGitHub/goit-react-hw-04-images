@@ -16,7 +16,7 @@ function getPixabayURL(searchTerm, pageNum, perPage) {
   return `${basePixabayURL}?${searchParams}`;
 }
 
-export async function axiosGetPixabayPhoto(requestTerm, numPage, perPage) {
+export default async function axiosGetPixabayPhoto(requestTerm, numPage, perPage) {
   const url = getPixabayURL(requestTerm, numPage, perPage);
   try {
     const response = await axios.get(url);

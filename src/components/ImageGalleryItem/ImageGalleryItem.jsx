@@ -1,18 +1,18 @@
 import PropTypes from 'prop-types';
 
-const ImageGalleryItem = ({ largeImageURL, webformatURL, tags, onClick }) =>  (
-    <li className="ImageGalleryItem">
-        <img
-            src={webformatURL}
-            alt={tags}
-            className="ImageGalleryItem-image"
-            loading="lazy" 
-            onClick={() => onClick(largeImageURL, tags)}
-        />
-    </li>
-);
-
-export default ImageGalleryItem;
+export default function ImageGalleryItem({ largeImageURL, webformatURL, tags, onClick }) {
+    return (
+        <li className="ImageGalleryItem">
+            <img
+                src={webformatURL}
+                alt={tags}
+                className="ImageGalleryItem-image"
+                loading="lazy" 
+                onClick={() => onClick(largeImageURL, tags)}
+            />
+        </li>
+    )
+};
 
 ImageGalleryItem.propTypes = {
     largeImageURL: PropTypes.string.isRequired,

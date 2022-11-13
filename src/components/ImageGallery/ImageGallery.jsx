@@ -1,21 +1,21 @@
 import PropTypes from 'prop-types';
 import ImageGalleryItem from "../ImageGalleryItem/ImageGalleryItem";
 
-const ImageGallery = ({ galleryPhotos, onClick }) =>  (
-  <ul className="ImageGallery">
-    {galleryPhotos.map(({ id, largeImageURL, webformatURL, tags }) => (
-      <ImageGalleryItem
-        key={id}
-        largeImageURL={largeImageURL}
-        webformatURL={webformatURL}
-        tags={tags}
-        onClick={onClick}
-       />
-    ))}
-  </ul>
-);
-
-export default ImageGallery;
+export default function ImageGallery({ galleryPhotos, onClick }) {
+  return (
+    <ul className="ImageGallery">
+      {galleryPhotos.map(({ id, largeImageURL, webformatURL, tags }) => (
+        <ImageGalleryItem
+          key={id}
+          largeImageURL={largeImageURL}
+          webformatURL={webformatURL}
+          tags={tags}
+          onClick={onClick}
+        />
+      ))}
+    </ul>
+  )
+};
 
 ImageGallery.propTypes = {
   galleryPhotos: PropTypes.arrayOf(PropTypes.shape({
