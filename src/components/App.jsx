@@ -57,9 +57,10 @@ export default function App() {
   
   useEffect(() => {
     if (searchValue !== '') {
-      //console.log('getGalleryPhotoByNumPage');
+      // console.log('getGalleryPhotoByNumPage');
       setLoading(true);
 
+      // getGalleryPhotoByNumPage();
       axiosGetPixabayPhoto(searchValue, pageCnt, PER_PAGE).then(data => {
         responseGalleryPhoto(data.data);
       }).catch(error => {
@@ -67,6 +68,7 @@ export default function App() {
         gotAnError(error);
       });
     }
+    // eslint-disable-next-line
   }, [searchValue, pageCnt]);
 
   const handleSearchValue = searchValueNew => {
