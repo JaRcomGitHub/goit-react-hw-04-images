@@ -3,6 +3,13 @@ import PropTypes from 'prop-types';
 
 export default function Modal({ urlImage, tags, onClose }) {
 
+    const handleKeyDown = event => {
+        if (event.code === 'Escape') {
+            //console.log('close modal');
+            onClose();
+        }
+    }
+
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
         //console.log('mount');
@@ -11,14 +18,7 @@ export default function Modal({ urlImage, tags, onClose }) {
             window.removeEventListener('keydown', handleKeyDown);
             //console.log('unmount');
         }
-    }, []);
-
-    const handleKeyDown = event => {
-        if (event.code === 'Escape') {
-            //console.log('close modal');
-            onClose();
-        }
-    }
+    });
 
     const handleOverlayClick = event => {
         if (event.currentTarget === event.target) {
