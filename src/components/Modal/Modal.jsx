@@ -2,23 +2,23 @@ import { useEffect } from "react";
 import PropTypes from 'prop-types';
 
 export default function Modal({ urlImage, tags, onClose }) {
-
-    const handleKeyDown = event => {
-        if (event.code === 'Escape') {
-            //console.log('close modal');
-            onClose();
-        }
-    }
-
     useEffect(() => {
+        const handleKeyDown = event => {
+            if (event.code === 'Escape') {
+                //console.log('close modal');
+                onClose();
+            }
+        };
+        
         window.addEventListener('keydown', handleKeyDown);
         //console.log('mount');
 
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
             //console.log('unmount');
-        }
-    });
+        };
+        // eslint-disable-next-line
+    }, [ ]);
 
     const handleOverlayClick = event => {
         if (event.currentTarget === event.target) {

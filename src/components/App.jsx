@@ -20,15 +20,12 @@ export default function App() {
   const [isNextPage, setIsNextPage] = useState(true);
   
   const responseGalleryPhoto = (data) => {
+    const { totalHits, hits } = data;
+    
     //const total = data.total;
-    const totalHits = data.totalHits;
-    const hits = data.hits;
-
     //console.log(total);
     //console.log(totalHits);
     //console.log(hits);
-
-    setLoading(false);
     
     setGalleryPhotos(prevGalleryPhotos => [...prevGalleryPhotos, ...hits]);
 
@@ -60,12 +57,16 @@ export default function App() {
       // console.log('getGalleryPhotoByNumPage');
       setLoading(true);
 
-      // getGalleryPhotoByNumPage();
-      axiosGetPixabayPhoto(searchValue, pageCnt, PER_PAGE).then(data => {
+      axiosGetPixabayPhoto(searchValue, pageCnt, PER_PAGE)
+      .then(data => {
         responseGalleryPhoto(data.data);
-      }).catch(error => {
+      })
+      .catch(error => {
         //console.log(error);
         gotAnError(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
     }
     // eslint-disable-next-line
